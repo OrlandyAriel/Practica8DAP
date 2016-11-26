@@ -4,16 +4,15 @@ import java.util.List;
 
 public class LeerJSONTaxis implements ILeerJSON
 {
-
 	@Override
-	public List<String> getListaBarrios()
+	public Geometry getLocalizacion(String a_barrio)
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Geometry getLocalizacion(String a_barrio)
+	public List<String> getListaZona()
 	{
 		// TODO Auto-generated method stub
 		return null;

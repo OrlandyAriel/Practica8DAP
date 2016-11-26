@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ILeerJSON
 {
-	public List<String> getListaBarrios();
+	public List<String> getListaZona();
 	public Geometry getLocalizacion(String a_barrio);
 }
