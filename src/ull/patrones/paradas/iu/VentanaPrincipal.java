@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,8 +21,9 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
 import ull.patrones.paradas.lecturadatos.Geometry;
-import ull.patrones.paradas.lecturadatos.ILeerJSON;
+import ull.patrones.paradas.lecturadatos.LeerJSON;
 import ull.patrones.paradas.lecturadatos.LeerJSONGuagua;
+import ull.patrones.paradas.lecturadatos.LeerJSONTaxis;
 import ull.patrones.paradas.mapa.Mapa;
 
 public class VentanaPrincipal extends JFrame
@@ -40,7 +40,7 @@ public class VentanaPrincipal extends JFrame
 	private Browser m_browser;
 	private BrowserView m_browserView;
 	
-	private ILeerJSON m_leerJson;
+	private LeerJSON m_leerJson;
 	private List<String> m_listaZonas;
 
 	public VentanaPrincipal()
@@ -87,27 +87,37 @@ public class VentanaPrincipal extends JFrame
 	 */
 	private void configCombos()
 	{
-		String []t_barrios = {"--Sin datos--"};
-		m_JCParadaTaxis = new JComboBox<String>(t_barrios);
+		m_JCParadaTaxis = new JComboBox<String>(new String[]{"--Seleccionar--"});
 		m_JCParadaTaxis.setVisible(true);
 		m_JCParadaTaxis.setEnabled(false);
+		m_JCParadaTaxis.addItemListener(new ItemListener()
+		{
+			@Override
+			public void itemStateChanged(ItemEvent arg0)
+			{
+				cargarMapa(m_JCParadaTaxis.getSelectedItem().toString());
+			}
+		});
 		
-		m_JCParadaGuaguas = new JComboBox<String>(t_barrios);
+		m_JCParadaGuaguas = new JComboBox<String>(new String[]{"--Seleccionar--"});
 		m_JCParadaGuaguas.setVisible(true);
 		m_JCParadaGuaguas.setEnabled(false);
 		m_JCParadaGuaguas.addItemListener(new ItemListener()
 		{
-			
 			@Override
 			public void itemStateChanged(ItemEvent arg0)
 			{
 				cargarMapa(m_JCParadaGuaguas.getSelectedItem().toString());
-				
 			}
 		});
 		
 	}
-
+	private void datosPorDefectoCombobox(JComboBox<String> a_combo)
+	{
+		
+		a_combo.addItem("--Seleccionar--");
+		a_combo.setEnabled(false);
+	}
 	private void configMapa()
 	{
 		m_browser = new Browser();
@@ -127,7 +137,6 @@ public class VentanaPrincipal extends JFrame
 	private void obtenerBarrios(JComboBox<String> a_combo)
 	{
 		String[] t_result =new String[m_listaZonas.size()];
-		System.out.println(m_listaZonas.size());
 		for (int i = 0; i < t_result.length; i++)
 		{
 			a_combo.addItem((m_listaZonas.get(i)));
@@ -135,11 +144,16 @@ public class VentanaPrincipal extends JFrame
 	}
 	private void activarCombo()
 	{
-		
 		if(m_RJParadasGuaguas.isSelected())
 		{
 			m_JCParadaGuaguas.setEnabled(true);
+			datosPorDefectoCombobox(m_JCParadaTaxis);
 			obtenerBarrios(m_JCParadaGuaguas);
+		}
+		else{
+			m_JCParadaTaxis.setEnabled(true);
+			datosPorDefectoCombobox(m_JCParadaGuaguas);
+			obtenerBarrios(m_JCParadaTaxis);
 		}
 	}
 	/**
@@ -151,7 +165,14 @@ public class VentanaPrincipal extends JFrame
 
 		m_RJParadasTaxis = new JRadioButton("Paradas de Taxis");
 		m_RJParadasTaxis.setVisible(true);
-		
+		m_RJParadasTaxis.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				actionRadioButtonPerformed(new LeerJSONTaxis());
+			}
+		});
 
 		m_RJParadasGuaguas = new JRadioButton("Paradas de Guaguas");
 		m_RJParadasGuaguas.setVisible(true);
@@ -160,13 +181,13 @@ public class VentanaPrincipal extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				actionGuaguaRadioButtonPerformed(new LeerJSONGuagua());
+				actionRadioButtonPerformed(new LeerJSONGuagua());
 			}
 		});
 		m_BGRadios.add(m_RJParadasTaxis);
 		m_BGRadios.add(m_RJParadasGuaguas);
 	}
-	private void actionGuaguaRadioButtonPerformed(ILeerJSON leerJSON)
+	private void actionRadioButtonPerformed(LeerJSON leerJSON)
 	{
 		m_leerJson = leerJSON;
 		m_listaZonas = m_leerJson.getListaZona();
@@ -184,15 +205,7 @@ public class VentanaPrincipal extends JFrame
 			@Override
 			public void run()
 			{
-			/*	try
-				{
-					sleep(10000);
-				} catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}*/
 				Mapa t = new Mapa();
-				System.out.println("long:"+a_lng+", lat:"+a_lat);
 				m_browser.loadHTML(t.getMapa(a_lat,a_lng));
 			}
 		};
@@ -213,8 +226,8 @@ public class VentanaPrincipal extends JFrame
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
-
 		this.add(m_panelSuperior, BorderLayout.SOUTH);
+		
 		configPanelCentral();
 		this.add(m_browserView, BorderLayout.CENTER);
 	}
