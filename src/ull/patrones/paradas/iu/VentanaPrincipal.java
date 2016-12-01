@@ -9,14 +9,13 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
@@ -34,12 +33,11 @@ public class VentanaPrincipal extends JFrame
 	private JPanel m_panelSuperior;
 	private JPanel m_panelCentral;
 
-	private JComboBox<String> m_JCParadaGuaguas;
-	private JComboBox<String> m_JCParadaTaxis;
+	private JComboBox<String> m_JCParadas;
 	private ButtonGroup m_BGRadios;
 	private Browser m_browser;
 	private BrowserView m_browserView;
-	
+
 	private LeerJSON m_leerJson;
 	private List<String> m_listaZonas;
 
@@ -66,20 +64,19 @@ public class VentanaPrincipal extends JFrame
 	private void configPanelSuperior()
 	{
 		m_panelSuperior = new JPanel();
-		m_panelSuperior.setLayout(new FlowLayout());
+		m_panelSuperior.setLayout(new BoxLayout(m_panelSuperior, BoxLayout.Y_AXIS));
 
-		JPanel t_panelIzquierda = new JPanel();
-		t_panelIzquierda.setLayout(new BoxLayout(t_panelIzquierda, BoxLayout.Y_AXIS));
-		t_panelIzquierda.add(m_RJParadasTaxis);
-		t_panelIzquierda.add(m_JCParadaTaxis, Box.LEFT_ALIGNMENT);
+		JPanel t_panelArriba = new JPanel();
+		t_panelArriba.setLayout(new FlowLayout());
+		t_panelArriba.add(m_RJParadasTaxis);
+		t_panelArriba.add(m_RJParadasGuaguas);
 
-		JPanel t_panelDerecha = new JPanel();
-		t_panelDerecha.setLayout(new BoxLayout(t_panelDerecha, BoxLayout.Y_AXIS));
-		t_panelDerecha.add(m_RJParadasGuaguas);
-		t_panelDerecha.add(m_JCParadaGuaguas);
+		JPanel t_panelAbajo = new JPanel();
+		t_panelAbajo.setLayout(new FlowLayout());
+		t_panelAbajo.add(m_JCParadas);
 
-		m_panelSuperior.add(t_panelIzquierda, FlowLayout.LEFT);
-		m_panelSuperior.add(t_panelDerecha, FlowLayout.LEFT);
+		m_panelSuperior.add(t_panelArriba, BorderLayout.SOUTH);
+		m_panelSuperior.add(t_panelAbajo, BorderLayout.NORTH);
 	}
 
 	/**
@@ -87,37 +84,29 @@ public class VentanaPrincipal extends JFrame
 	 */
 	private void configCombos()
 	{
-		m_JCParadaTaxis = new JComboBox<String>(new String[]{"--Seleccionar--"});
-		m_JCParadaTaxis.setVisible(true);
-		m_JCParadaTaxis.setEnabled(false);
-		m_JCParadaTaxis.addItemListener(new ItemListener()
-		{
-			@Override
-			public void itemStateChanged(ItemEvent arg0)
-			{
-				cargarMapa(m_JCParadaTaxis.getSelectedItem().toString());
-			}
-		});
-		
-		m_JCParadaGuaguas = new JComboBox<String>(new String[]{"--Seleccionar--"});
-		m_JCParadaGuaguas.setVisible(true);
-		m_JCParadaGuaguas.setEnabled(false);
-		m_JCParadaGuaguas.addItemListener(new ItemListener()
-		{
-			@Override
-			public void itemStateChanged(ItemEvent arg0)
-			{
-				cargarMapa(m_JCParadaGuaguas.getSelectedItem().toString());
-			}
-		});
-		
+		m_JCParadas = new JComboBox<String>();
+		datosPorDefectoCombobox();
+		m_JCParadas.setVisible(true);
+		m_JCParadas.addItemListener(
+				new ItemListener()
+				{
+					@Override
+					public void itemStateChanged(ItemEvent arg0)
+					{
+						cargarMapa(m_JCParadas.getSelectedItem().toString());
+					}
+				}
+		);
+
 	}
-	private void datosPorDefectoCombobox(JComboBox<String> a_combo)
+
+	private void datosPorDefectoCombobox()
 	{
-		
-		a_combo.addItem("--Seleccionar--");
-		a_combo.setEnabled(false);
+		DefaultComboBoxModel<String> a_com=new  DefaultComboBoxModel<String>();
+		a_com.addElement("--Seleecionar--");
+		m_JCParadas.setModel(a_com);
 	}
+
 	private void configMapa()
 	{
 		m_browser = new Browser();
@@ -136,26 +125,21 @@ public class VentanaPrincipal extends JFrame
 
 	private void obtenerBarrios(JComboBox<String> a_combo)
 	{
-		String[] t_result =new String[m_listaZonas.size()];
+		String[] t_result = new String[m_listaZonas.size()];
 		for (int i = 0; i < t_result.length; i++)
 		{
 			a_combo.addItem((m_listaZonas.get(i)));
 		}
 	}
+
 	private void activarCombo()
 	{
-		if(m_RJParadasGuaguas.isSelected())
-		{
-			m_JCParadaGuaguas.setEnabled(true);
-			datosPorDefectoCombobox(m_JCParadaTaxis);
-			obtenerBarrios(m_JCParadaGuaguas);
-		}
-		else{
-			m_JCParadaTaxis.setEnabled(true);
-			datosPorDefectoCombobox(m_JCParadaGuaguas);
-			obtenerBarrios(m_JCParadaTaxis);
-		}
+
+		datosPorDefectoCombobox();
+		obtenerBarrios(m_JCParadas);
+
 	}
+
 	/**
 	 * Método que configura los radiosButton
 	 */
@@ -165,39 +149,44 @@ public class VentanaPrincipal extends JFrame
 
 		m_RJParadasTaxis = new JRadioButton("Paradas de Taxis");
 		m_RJParadasTaxis.setVisible(true);
-		m_RJParadasTaxis.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent arg0)
-			{
-				actionRadioButtonPerformed(new LeerJSONTaxis());
-			}
-		});
+		m_RJParadasTaxis.addActionListener(
+				new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent arg0)
+					{
+						actionRadioButtonPerformed(new LeerJSONTaxis());
+					}
+				}
+		);
 
 		m_RJParadasGuaguas = new JRadioButton("Paradas de Guaguas");
 		m_RJParadasGuaguas.setVisible(true);
-		m_RJParadasGuaguas.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent arg0)
-			{
-				actionRadioButtonPerformed(new LeerJSONGuagua());
-			}
-		});
+		m_RJParadasGuaguas.addActionListener(
+				new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent arg0)
+					{
+						actionRadioButtonPerformed(new LeerJSONGuagua());
+					}
+				}
+		);
 		m_BGRadios.add(m_RJParadasTaxis);
 		m_BGRadios.add(m_RJParadasGuaguas);
 	}
+
 	private void actionRadioButtonPerformed(LeerJSON leerJSON)
 	{
 		m_leerJson = leerJSON;
 		m_listaZonas = m_leerJson.getListaZona();
-		
+
 		activarCombo();
-		
 	}
+
 	private void cargarMapa(String zona)
 	{
-		Geometry t_geo=m_leerJson.getLocalizacion(zona);
+		Geometry t_geo = m_leerJson.getLocalizacion(zona);
 		Double a_lat = t_geo.getM_latitud();
 		Double a_lng = t_geo.getM_longitud();
 		Thread a = new Thread()
@@ -206,14 +195,21 @@ public class VentanaPrincipal extends JFrame
 			public void run()
 			{
 				Mapa t = new Mapa();
-				m_browser.loadHTML(t.getMapa(a_lat,a_lng));
+				m_browser.loadHTML(t.getMapa(a_lat, a_lng));
 			}
 		};
-		
-		//String htm_carga="<html>\n  <head>\n    <title>PROBANDO</title>\n    <script>\n      window.onload = detectarCarga;\n      function detectarCarga(){\n         document.getElementById(\"carga\").style.display=\"none\";\n      }\n    </script>\n  </head>\n  <body>\n  <div id=\"carga\">\n    <img src=\"http://i.imgur.com/B96QZec.gif\" />\n  </div>\n  </body>\n</html>";
-		//m_browser.loadHTML(htm_carga);;
+
+		// String htm_carga="<html>\n <head>\n <title>PROBANDO</title>\n
+		// <script>\n window.onload = detectarCarga;\n function
+		// detectarCarga(){\n
+		// document.getElementById(\"carga\").style.display=\"none\";\n }\n
+		// </script>\n </head>\n <body>\n <div id=\"carga\">\n <img
+		// src=\"http://i.imgur.com/B96QZec.gif\" />\n </div>\n
+		// </body>\n</html>";
+		// m_browser.loadHTML(htm_carga);;
 		a.start();
 	}
+
 	/**
 	 * Método para añadir los componentes a la ventana principal y configurarla
 	 */
@@ -227,7 +223,7 @@ public class VentanaPrincipal extends JFrame
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.add(m_panelSuperior, BorderLayout.SOUTH);
-		
+
 		configPanelCentral();
 		this.add(m_browserView, BorderLayout.CENTER);
 	}
