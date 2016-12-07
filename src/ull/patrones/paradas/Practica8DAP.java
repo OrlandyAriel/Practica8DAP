@@ -6,7 +6,6 @@ public class Practica8DAP
 {
 	public static void main(String[] args)
 	{
-		
 		new VentanaPrincipal();
 	}
 }

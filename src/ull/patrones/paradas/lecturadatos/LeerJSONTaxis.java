@@ -17,7 +17,7 @@ public class LeerJSONTaxis extends LeerJSON
 		m_listaParadas = new ArrayList<>();
 		leerDatos();
 	}
-
+	@Override
 	public void paradaConcreta(JsonObject a_jsonObject)
 	{
 		ParadaTaxi t_paradaTaxi = new ParadaTaxi();
@@ -40,20 +40,18 @@ public class LeerJSONTaxis extends LeerJSON
 		m_listaParadas.add(t_paradaTaxi);
 		addZona(t_paradaTaxi.getBarrio());
 	}
-
-	@Override
-	public Geometry getLocalizacion(String a_barrio)
+	public List<Geometry> getGeometrys(String a_barrio)
 	{
-		Geometry t_geometry=new Geometry();
+		ArrayList<Geometry> t_list = new ArrayList<>();
+		
 		for (int i = 0; i < m_listaParadas.size(); i++)
 		{
-			ParadaTaxi t_parada=m_listaParadas.get(i);
-			if(t_parada.getBarrio()==a_barrio)
+			ParadaTaxi t_parada = m_listaParadas.get(i);
+			if(t_parada.getBarrio().equals(a_barrio))
 			{
-				i=m_listaParadas.size();
-				t_geometry = t_parada.getGeometry();
+				t_list.add(t_parada.getGeometry());
 			}
 		}
-		return t_geometry;
+		return t_list;
 	}
 }

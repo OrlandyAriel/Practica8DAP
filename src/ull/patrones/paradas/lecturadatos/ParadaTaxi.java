@@ -51,6 +51,12 @@ public class ParadaTaxi
 		this.direccion = direccion;
 	}
 	@Override
+	public boolean equals(Object obj)
+	{
+		String barrio = (String) obj;
+		return this.barrio.equals(barrio);
+	}
+	@Override
 	public String toString()
 	{
 		String t_resul = "Geocodigo:"+getgeocodigo()+"\nlong_sing:"+ long_sig+"\nBarrio:"+barrio+"\ndireccion:"+direccion+"\nGeometria{\n"+geometry+"\n.................................";

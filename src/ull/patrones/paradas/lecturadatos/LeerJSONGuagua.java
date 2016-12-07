@@ -50,22 +50,22 @@ public class LeerJSONGuagua extends LeerJSON
 		m_listaParadas.add(t_paradaGuagua);
 		addZona(t_paradaGuagua.getNombre());
 	}
-	
 	@Override
-	public Geometry getLocalizacion(String a_barrio)
+	public List<Geometry> getGeometrys(String a_barrio)
 	{
 		
-		Geometry t_geometry = new Geometry();
-		for (int i = 0; i < m_listaParadas.size(); i++)
-		{
-			ParadaGuagua t_parada=m_listaParadas.get(i);
-			if(t_parada.getNombre()==a_barrio)
+			ArrayList<Geometry> t_list = new ArrayList<>();
+			
+			for (int i = 0; i < m_listaParadas.size(); i++)
 			{
-				i=m_listaParadas.size();
-				t_geometry = t_parada.getGeometry();
+				ParadaGuagua t_parada = m_listaParadas.get(i);
+				if(t_parada.getNombre().equals(a_barrio))
+				{
+					t_list.add(t_parada.getGeometry());
+				}
 			}
-		}
-		return t_geometry;
+			return t_list;
+		
 	}
 
 }

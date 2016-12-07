@@ -26,53 +26,49 @@ public abstract class LeerJSON
 		m_termino = false;
 	}
 
-
-
+	public String getURL()
+	{
+		return m_jsonFile;
+	}
 	public void leerDatos()
 	{
-		Thread hiloDescarga = new Thread()// Hilo para evitar que se bloquee la
-		// aplicación
+		URLConnection urlConn = null;
+		InputStreamReader in = null;
+		try
 		{
-			public void run()
+			URL url = new URL(m_jsonFile);
+			urlConn = url.openConnection();// abre la conexión con el
+			// servidor
+			if (urlConn != null)
 			{
-				URLConnection urlConn = null;
-				InputStreamReader in = null;
-				try
-				{
-					URL url = new URL(m_jsonFile);
-					urlConn = url.openConnection();// abre la conexión con el
-					// servidor
-					if (urlConn != null)
-					{
-						// establece tiempo de espera para descargar, 1 minuto
-						urlConn.setReadTimeout(60 * 1000);
-					}
-					if (urlConn != null && urlConn.getInputStream() != null)
-					{
-						// Charset.defaultCharset() utilizado para formatear el
-						// fichero de entrada al juego de caracteres de la
-						// maquina
-						in = new InputStreamReader(urlConn.getInputStream(), Charset.defaultCharset());
-						JsonReader jsonReader = Json.createReader(in);
-						JsonObject json = jsonReader.readObject();
-						JsonArray jsonArray = json.getJsonArray("docs");
-						for (JsonValue jsonValue : jsonArray)
-						{
-							paradaConcreta((JsonObject) jsonValue);
-						}
-						setTermino(true);
-					}
-					in.close();
-				} catch (Exception e)
-				{
-					throw new RuntimeException("Error mientras se conectaba a la URL:" + m_jsonFile, e);
-				}
+				// establece tiempo de espera para descargar, 1 minuto
+				urlConn.setReadTimeout(60 * 1000);
 			}
-		};
-		hiloDescarga.start();
+			if (urlConn != null && urlConn.getInputStream() != null)
+			{
+				// Charset.defaultCharset() utilizado para formatear el
+				// fichero de entrada al juego de caracteres de la
+				// maquina
+				in = new InputStreamReader(urlConn.getInputStream(), Charset.defaultCharset());
+				JsonReader jsonReader = Json.createReader(in);
+				JsonObject json = jsonReader.readObject();
+				JsonArray jsonArray = json.getJsonArray("docs");
+				for (JsonValue jsonValue : jsonArray)
+				{
+					paradaConcreta((JsonObject) jsonValue);
+				}
+				setTermino(true);
+			}
+			in.close();
+		} catch (Exception e)
+		{
+			throw new RuntimeException("Error mientras se conectaba a la URL:" + m_jsonFile, e);
+		}
 	}
 
-	protected abstract void paradaConcreta(JsonObject jsonValue);
+	public abstract void paradaConcreta(JsonObject jsonValue);
+
+	public abstract List<Geometry> getGeometrys(String a_barrio);
 
 	public boolean getTermino()
 	{
@@ -81,23 +77,16 @@ public abstract class LeerJSON
 
 	public void addZona(String a_zona)
 	{
-
-		m_listaZona.add(a_zona);
+		if(!m_listaZona.contains(a_zona))
+			m_listaZona.add(a_zona);
 	}
 
 	public void setTermino(boolean a_estado)
 	{
 		m_termino = a_estado;
 	}
-
 	public List<String> getListaZona()
 	{
-		while (m_termino != true)
-		{
-			System.out.print("");
-		}
 		return m_listaZona;
 	}
-
-	public abstract Geometry getLocalizacion(String a_barrio);
 }

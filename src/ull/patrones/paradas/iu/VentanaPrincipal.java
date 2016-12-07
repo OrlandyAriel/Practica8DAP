@@ -19,12 +19,15 @@ import javax.swing.JRadioButton;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
-import ull.patrones.paradas.lecturadatos.Geometry;
 import ull.patrones.paradas.lecturadatos.LeerJSON;
 import ull.patrones.paradas.lecturadatos.LeerJSONGuagua;
 import ull.patrones.paradas.lecturadatos.LeerJSONTaxis;
 import ull.patrones.paradas.mapa.Mapa;
-
+/**
+ * 
+ * @author Orlandy Ariel Sánchez A.
+ *
+ */
 public class VentanaPrincipal extends JFrame
 {
 	private static final long serialVersionUID = -8439451759008893300L;
@@ -40,7 +43,9 @@ public class VentanaPrincipal extends JFrame
 
 	private LeerJSON m_leerJson;
 	private List<String> m_listaZonas;
-
+	/**
+	 * Constructor por defecto
+	 */
 	public VentanaPrincipal()
 	{
 		listaZonasPorDefecto();
@@ -51,7 +56,9 @@ public class VentanaPrincipal extends JFrame
 		configPanelCentral();
 		initComponent();
 	}
-
+	/**
+	 * Método que crea una lista por defecto para los Barrios/zonas
+	 */
 	private void listaZonasPorDefecto()
 	{
 		m_listaZonas = new ArrayList<>();
@@ -97,20 +104,24 @@ public class VentanaPrincipal extends JFrame
 					}
 				}
 		);
-
 	}
-
+	/**
+	 * Método para poner valores por defecto al JComboBox
+	 */
 	private void datosPorDefectoCombobox()
 	{
-		DefaultComboBoxModel<String> a_com=new  DefaultComboBoxModel<String>();
+		DefaultComboBoxModel<String> a_com = new DefaultComboBoxModel<String>();
 		a_com.addElement("--Seleecionar--");
 		m_JCParadas.setModel(a_com);
 	}
-
+	/**
+	 * Método para inicializar los valores de navegador de JxBrowser
+	 */
 	private void configMapa()
 	{
 		m_browser = new Browser();
 		m_browserView = new BrowserView(m_browser);
+		mapaPorDefecto();
 	}
 
 	/**
@@ -122,22 +133,25 @@ public class VentanaPrincipal extends JFrame
 		m_panelCentral.setVisible(true);
 		m_panelCentral.add(m_browserView);
 	}
-
+	/**
+	 * Método que añade los barrios/zonas al JComboBox
+	 * @param a_combo
+	 */
 	private void obtenerBarrios(JComboBox<String> a_combo)
 	{
-		String[] t_result = new String[m_listaZonas.size()];
-		for (int i = 0; i < t_result.length; i++)
+		for (int i = 0; i < m_listaZonas.size(); i++)
 		{
 			a_combo.addItem((m_listaZonas.get(i)));
 		}
 	}
 
+	/**
+	 * Método utilizada para cuando se selecciona un item del combobox
+	 */
 	private void activarCombo()
 	{
-
 		datosPorDefectoCombobox();
 		obtenerBarrios(m_JCParadas);
-
 	}
 
 	/**
@@ -175,7 +189,11 @@ public class VentanaPrincipal extends JFrame
 		m_BGRadios.add(m_RJParadasTaxis);
 		m_BGRadios.add(m_RJParadasGuaguas);
 	}
-
+	/**
+	 *Método utilizado obtener la lista de las zonas partiendo del 
+	 *parámetro, se activa cuando se pulsa alguno de los JRadioButton
+	 * @param leerJSON
+	 */
 	private void actionRadioButtonPerformed(LeerJSON leerJSON)
 	{
 		m_leerJson = leerJSON;
@@ -183,19 +201,22 @@ public class VentanaPrincipal extends JFrame
 
 		activarCombo();
 	}
-
+	/**
+	 * Permite cargar el mapa según se seleccione el barrio o zona del JComboBox
+	 * @param zona
+	 */
 	private void cargarMapa(String zona)
 	{
-		Geometry t_geo = m_leerJson.getLocalizacion(zona);
-		Double a_lat = t_geo.getM_latitud();
-		Double a_lng = t_geo.getM_longitud();
 		Thread a = new Thread()
 		{
 			@Override
 			public void run()
 			{
 				Mapa t = new Mapa();
-				m_browser.loadHTML(t.getMapa(a_lat, a_lng));
+				String html = t.getMapa(m_leerJson.getGeometrys(zona));
+				System.out.println(html);
+
+				m_browser.loadHTML(html);
 			}
 		};
 
@@ -208,6 +229,18 @@ public class VentanaPrincipal extends JFrame
 		// </body>\n</html>";
 		// m_browser.loadHTML(htm_carga);;
 		a.start();
+	}
+	/**
+	 * Método que da valores por defecto (un texto)
+	 * al navegador JxBrowser
+	 */
+	private void mapaPorDefecto()
+	{
+		Mapa t = new Mapa();
+		String html = t.getMapa(new ArrayList<>());
+		System.out.println(html);
+
+		m_browser.loadHTML(html);
 	}
 
 	/**
