@@ -2,7 +2,7 @@ package ull.patrones.paradas.mapa;
 
 import java.util.List;
 
-import ull.patrones.paradas.lecturadatos.Geometry;
+import ull.patrones.paradas.datos.Geometry;
 /**
  * 
  * @author Orlandy Ariel Sánchez A.

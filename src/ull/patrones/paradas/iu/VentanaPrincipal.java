@@ -85,7 +85,6 @@ public class VentanaPrincipal extends JFrame
 		m_panelSuperior.add(t_panelArriba, BorderLayout.SOUTH);
 		m_panelSuperior.add(t_panelAbajo, BorderLayout.NORTH);
 	}
-
 	/**
 	 * Método para crear los combobox y añadirle sus datos
 	 */

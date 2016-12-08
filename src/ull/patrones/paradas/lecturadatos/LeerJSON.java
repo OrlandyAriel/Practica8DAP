@@ -13,6 +13,8 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import ull.patrones.paradas.datos.Geometry;
+
 public abstract class LeerJSON
 {
 	private String m_jsonFile;
@@ -26,11 +28,16 @@ public abstract class LeerJSON
 		m_termino = false;
 	}
 
+	public abstract void paradaConcreta(JsonObject jsonValue);
+
+	public abstract List<Geometry> getGeometrys(String a_barrio);
+
 	public String getURL()
 	{
 		return m_jsonFile;
 	}
-	public void leerDatos()
+
+	public boolean leerDatos()
 	{
 		URLConnection urlConn = null;
 		InputStreamReader in = null;
@@ -57,18 +64,16 @@ public abstract class LeerJSON
 				{
 					paradaConcreta((JsonObject) jsonValue);
 				}
-				setTermino(true);
 			}
 			in.close();
+			m_termino = true;
+
 		} catch (Exception e)
 		{
 			throw new RuntimeException("Error mientras se conectaba a la URL:" + m_jsonFile, e);
 		}
+		return m_termino;
 	}
-
-	public abstract void paradaConcreta(JsonObject jsonValue);
-
-	public abstract List<Geometry> getGeometrys(String a_barrio);
 
 	public boolean getTermino()
 	{
@@ -77,14 +82,10 @@ public abstract class LeerJSON
 
 	public void addZona(String a_zona)
 	{
-		if(!m_listaZona.contains(a_zona))
+		if (!m_listaZona.contains(a_zona))
 			m_listaZona.add(a_zona);
 	}
 
-	public void setTermino(boolean a_estado)
-	{
-		m_termino = a_estado;
-	}
 	public List<String> getListaZona()
 	{
 		return m_listaZona;

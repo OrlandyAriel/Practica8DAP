@@ -7,10 +7,19 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+import ull.patrones.paradas.datos.Geometry;
+import ull.patrones.paradas.datos.ParadaTaxi;
+/**
+ * @author Orlandy Ariel Sánchez A.
+ *
+ */
 public class LeerJSONTaxis extends LeerJSON
 {
-	private static String JSON_URL_TAXI = "http://www.santacruzdetenerife.es/opendata/dataset/b4961b60-5310-494c-a2e5-d9a8f3d9aad3/resource/a09a1850-a9b0-45e9-b9b3-24cab6b65d31/download/paradastaxi.json";
+	private final static String JSON_URL_TAXI = "http://www.santacruzdetenerife.es/opendata/dataset/b4961b60-5310-494c-a2e5-d9a8f3d9aad3/resource/a09a1850-a9b0-45e9-b9b3-24cab6b65d31/download/paradastaxi.json";
 	private List<ParadaTaxi> m_listaParadas;
+	/**
+	 * Constructor por defecto
+	 */
 	public LeerJSONTaxis()
 	{
 		super(JSON_URL_TAXI);
@@ -40,6 +49,7 @@ public class LeerJSONTaxis extends LeerJSON
 		m_listaParadas.add(t_paradaTaxi);
 		addZona(t_paradaTaxi.getBarrio());
 	}
+	@Override
 	public List<Geometry> getGeometrys(String a_barrio)
 	{
 		ArrayList<Geometry> t_list = new ArrayList<>();

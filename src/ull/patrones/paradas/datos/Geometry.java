@@ -1,4 +1,4 @@
-package ull.patrones.paradas.lecturadatos;
+package ull.patrones.paradas.datos;
 
 import java.util.List;
 
