@@ -39,6 +39,10 @@ public abstract class LeerJSON
 
 	public boolean leerDatos()
 	{
+		long a =System.currentTimeMillis();
+		long b =0;
+		long aa = 0;
+		long bb=0;
 		URLConnection urlConn = null;
 		InputStreamReader in = null;
 		try
@@ -60,14 +64,18 @@ public abstract class LeerJSON
 				JsonReader jsonReader = Json.createReader(in);
 				JsonObject json = jsonReader.readObject();
 				JsonArray jsonArray = json.getJsonArray("docs");
+				b=System.currentTimeMillis();
+				aa = System.currentTimeMillis();
 				for (JsonValue jsonValue : jsonArray)
 				{
 					paradaConcreta((JsonObject) jsonValue);
 				}
+				bb = System.currentTimeMillis();
 			}
 			in.close();
 			m_termino = true;
-
+			System.err.println("tiempo de descarga"+(a-b));
+			System.out.println("tiepo de consturcción" +(aa-bb));
 		} catch (Exception e)
 		{
 			throw new RuntimeException("Error mientras se conectaba a la URL:" + m_jsonFile, e);

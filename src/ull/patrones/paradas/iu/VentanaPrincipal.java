@@ -213,7 +213,6 @@ public class VentanaPrincipal extends JFrame
 			{
 				Mapa t = new Mapa();
 				String html = t.getMapa(m_leerJson.getGeometrys(zona));
-				System.out.println(html);
 
 				m_browser.loadHTML(html);
 			}
@@ -237,7 +236,6 @@ public class VentanaPrincipal extends JFrame
 	{
 		Mapa t = new Mapa();
 		String html = t.getMapa(new ArrayList<>());
-		System.out.println(html);
 
 		m_browser.loadHTML(html);
 	}
