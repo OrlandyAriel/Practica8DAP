@@ -9,6 +9,7 @@ import javax.json.JsonValue;
 
 import ull.patrones.paradas.datos.Geometry;
 import ull.patrones.paradas.datos.ParadaGuagua;
+
 /**
  * @author Orlandy Ariel Sánchez A.
  *
@@ -17,6 +18,7 @@ public class LeerJSONGuagua extends LeerJSON
 {
 	private final static String JSON_URL_GUAGUA = "http://www.santacruzdetenerife.es/opendata/dataset/07e107d2-209a-4bfa-862e-00fcf497ae1d/resource/5ba90d75-1fd4-4304-b41c-7c2537891fa1/download/busturisticoparadas.json";
 	private List<ParadaGuagua> m_listaParadas;
+
 	/**
 	 * Constructor por defecto
 	 */
@@ -56,6 +58,7 @@ public class LeerJSONGuagua extends LeerJSON
 		m_listaParadas.add(t_paradaGuagua);
 		addZona(t_paradaGuagua.getNombre());
 	}
+
 	@Override
 	public List<Geometry> getGeometrys(String a_barrio)
 	{

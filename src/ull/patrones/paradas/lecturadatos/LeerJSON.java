@@ -1,5 +1,6 @@
 package ull.patrones.paradas.lecturadatos;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,10 +21,23 @@ public abstract class LeerJSON
 	private String m_jsonFile;
 	private boolean m_termino;
 	private List<String> m_listaZona;
+	private URLConnection m_urlConnetion;
+	private InputStreamReader m_inputStreamReader;
+	private URL m_url;
+	private JsonReader m_jsonReader;
+	private JsonObject m_jsonObjet;
 
 	public LeerJSON(String a_jsonFile)
 	{
 		m_jsonFile = a_jsonFile;
+		m_listaZona = new ArrayList<>();
+		m_termino = false;
+		m_urlConnetion = null;
+		m_inputStreamReader = null;
+	}
+
+	public LeerJSON()
+	{
 		m_listaZona = new ArrayList<>();
 		m_termino = false;
 	}
@@ -37,50 +51,57 @@ public abstract class LeerJSON
 		return m_jsonFile;
 	}
 
-	public boolean leerDatos()
+	public void leerDatos()
 	{
-		long a =System.currentTimeMillis();
-		long b =0;
-		long aa = 0;
-		long bb=0;
-		URLConnection urlConn = null;
-		InputStreamReader in = null;
 		try
 		{
-			URL url = new URL(m_jsonFile);
-			urlConn = url.openConnection();// abre la conexión con el
+			m_url = new URL(m_jsonFile);
+			m_urlConnetion = m_url.openConnection();// abre la conexión con el
 			// servidor
-			if (urlConn != null)
+			if (m_urlConnetion != null)
 			{
 				// establece tiempo de espera para descargar, 1 minuto
-				urlConn.setReadTimeout(60 * 1000);
+				m_urlConnetion.setReadTimeout(60 * 1000);
 			}
-			if (urlConn != null && urlConn.getInputStream() != null)
+			if (m_urlConnetion != null && m_urlConnetion.getInputStream() != null)
 			{
 				// Charset.defaultCharset() utilizado para formatear el
 				// fichero de entrada al juego de caracteres de la
 				// maquina
-				in = new InputStreamReader(urlConn.getInputStream(), Charset.defaultCharset());
-				JsonReader jsonReader = Json.createReader(in);
-				JsonObject json = jsonReader.readObject();
-				JsonArray jsonArray = json.getJsonArray("docs");
-				b=System.currentTimeMillis();
-				aa = System.currentTimeMillis();
-				for (JsonValue jsonValue : jsonArray)
-				{
-					paradaConcreta((JsonObject) jsonValue);
-				}
-				bb = System.currentTimeMillis();
+				m_inputStreamReader = new InputStreamReader(m_urlConnetion.getInputStream(), Charset.defaultCharset());
+				m_jsonReader = Json.createReader(m_inputStreamReader);
 			}
-			in.close();
-			m_termino = true;
-			System.err.println("tiempo de descarga"+(a-b));
-			System.out.println("tiepo de consturcción" +(aa-bb));
+
 		} catch (Exception e)
 		{
 			throw new RuntimeException("Error mientras se conectaba a la URL:" + m_jsonFile, e);
 		}
-		return m_termino;
+	}
+
+	public void paradasConfig()
+	{
+		Thread hilo = new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					m_jsonObjet = m_jsonReader.readObject();
+					JsonArray jsonArray = m_jsonObjet.getJsonArray("docs");
+					for (JsonValue jsonValue : jsonArray)
+					{
+						paradaConcreta((JsonObject) jsonValue);
+					}
+					m_termino = true;
+					m_inputStreamReader.close();
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+		hilo.start();
 	}
 
 	public boolean getTermino()

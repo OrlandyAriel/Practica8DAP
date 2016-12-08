@@ -196,6 +196,7 @@ public class VentanaPrincipal extends JFrame
 	private void actionRadioButtonPerformed(LeerJSON leerJSON)
 	{
 		m_leerJson = leerJSON;
+		m_leerJson.paradasConfig();
 		m_listaZonas = m_leerJson.getListaZona();
 
 		activarCombo();
@@ -217,15 +218,6 @@ public class VentanaPrincipal extends JFrame
 				m_browser.loadHTML(html);
 			}
 		};
-
-		// String htm_carga="<html>\n <head>\n <title>PROBANDO</title>\n
-		// <script>\n window.onload = detectarCarga;\n function
-		// detectarCarga(){\n
-		// document.getElementById(\"carga\").style.display=\"none\";\n }\n
-		// </script>\n </head>\n <body>\n <div id=\"carga\">\n <img
-		// src=\"http://i.imgur.com/B96QZec.gif\" />\n </div>\n
-		// </body>\n</html>";
-		// m_browser.loadHTML(htm_carga);;
 		a.start();
 	}
 	/**
