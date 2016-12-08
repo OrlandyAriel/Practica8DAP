@@ -50,7 +50,6 @@ public abstract class LeerJSON
 	{
 		return m_jsonFile;
 	}
-
 	public void leerDatos()
 	{
 		try
@@ -77,31 +76,22 @@ public abstract class LeerJSON
 			throw new RuntimeException("Error mientras se conectaba a la URL:" + m_jsonFile, e);
 		}
 	}
-
 	public void paradasConfig()
 	{
-		Thread hilo = new Thread(new Runnable()
+		try
 		{
-			@Override
-			public void run()
+			m_jsonObjet = m_jsonReader.readObject();
+			JsonArray jsonArray = m_jsonObjet.getJsonArray("docs");
+			for (JsonValue jsonValue : jsonArray)
 			{
-				try
-				{
-					m_jsonObjet = m_jsonReader.readObject();
-					JsonArray jsonArray = m_jsonObjet.getJsonArray("docs");
-					for (JsonValue jsonValue : jsonArray)
-					{
-						paradaConcreta((JsonObject) jsonValue);
-					}
-					m_termino = true;
-					m_inputStreamReader.close();
-				} catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				paradaConcreta((JsonObject) jsonValue);
 			}
-		});
-		hilo.start();
+			m_inputStreamReader.close();
+			m_termino = true;
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public boolean getTermino()
