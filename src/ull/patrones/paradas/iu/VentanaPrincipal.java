@@ -20,8 +20,8 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 
 import ull.patrones.paradas.lecturadatos.LeerJSON;
-import ull.patrones.paradas.lecturadatos.ProxyGuagua;
-import ull.patrones.paradas.lecturadatos.ProxyTaxi;
+import ull.patrones.paradas.lecturadatos.LeerJSONGuagua;
+import ull.patrones.paradas.lecturadatos.LeerJSONTaxis;
 import ull.patrones.paradas.mapa.IMapa;
 import ull.patrones.paradas.mapa.MapaProxy;
 
@@ -165,20 +165,6 @@ public class VentanaPrincipal extends JFrame
 			m_JCParadas.addItem((m_listaZonas.get(i)));
 		}
 	}
-
-	/**
-	 * Método que añade los barrios/zonas al JComboBox
-	 * 
-	 * @param a_combo
-	 */
-	public void obtenerBarrios(List<String> zona)
-	{
-		for (int i = 0; i < zona.size(); i++)
-		{
-			m_JCParadas.addItem((zona.get(i)));
-		}
-	}
-
 	/**
 	 * Método utilizada para cuando se selecciona un item del combobox
 	 */
@@ -203,7 +189,7 @@ public class VentanaPrincipal extends JFrame
 					@Override
 					public void actionPerformed(ActionEvent arg0)
 					{
-						actionRadioButtonPerformed(new ProxyTaxi());
+						actionRadioButtonPerformed(new LeerJSONTaxis());
 					}
 				}
 		);
@@ -216,7 +202,7 @@ public class VentanaPrincipal extends JFrame
 					@Override
 					public void actionPerformed(ActionEvent arg0)
 					{
-						actionRadioButtonPerformed(new ProxyGuagua());
+						actionRadioButtonPerformed(new LeerJSONGuagua());
 					}
 				}
 		);
@@ -277,7 +263,6 @@ public class VentanaPrincipal extends JFrame
 		};
 		hilo.start();
 	}
-
 	/**
 	 * Método para añadir los componentes a la ventana principal y configurarla
 	 */

@@ -16,7 +16,7 @@ import javax.json.JsonValue;
 
 import ull.patrones.paradas.datos.Geometry;
 
-public abstract class LeerJSON
+public abstract class LeerJSON extends Thread
 {
 	private String m_jsonFile;
 	private boolean m_termino;
@@ -50,6 +50,7 @@ public abstract class LeerJSON
 	{
 		return m_jsonFile;
 	}
+
 	public void leerDatos()
 	{
 		try
@@ -76,25 +77,30 @@ public abstract class LeerJSON
 			throw new RuntimeException("Error mientras se conectaba a la URL:" + m_jsonFile, e);
 		}
 	}
+
 	public void paradasConfig()
 	{
 		try
 		{
-			m_jsonObjet = m_jsonReader.readObject();
-			JsonArray jsonArray = m_jsonObjet.getJsonArray("docs");
-			for (JsonValue jsonValue : jsonArray)
+			if (m_termino == false)
 			{
-				paradaConcreta((JsonObject) jsonValue);
+				m_jsonObjet = m_jsonReader.readObject();
+				JsonArray jsonArray = m_jsonObjet.getJsonArray("docs");
+				for (JsonValue jsonValue : jsonArray)
+				{
+					paradaConcreta((JsonObject) jsonValue);
+				}
+				m_inputStreamReader.close();
+				m_termino = true;
 			}
-			m_inputStreamReader.close();
-			m_termino = true;
+
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
 
-	public boolean getTermino()
+	public Boolean getTermino()
 	{
 		return m_termino;
 	}

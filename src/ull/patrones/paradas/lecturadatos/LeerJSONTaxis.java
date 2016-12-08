@@ -28,40 +28,30 @@ public class LeerJSONTaxis extends LeerJSON
 		m_listaParadas = new ArrayList<>();
 		leerDatos();
 	}
-
 	@Override
 	public void paradaConcreta(JsonObject a_jsonObject)
 	{
-		Thread hilo = new Thread(
-				new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						ParadaTaxi t_paradaTaxi = new ParadaTaxi();
-						Geometry t_geometry = new Geometry();
+			ParadaTaxi t_paradaTaxi = new ParadaTaxi();
+			Geometry t_geometry = new Geometry();
 
-						JsonObject t_sonGeo = a_jsonObject.getJsonObject("geometry");
-						t_geometry.setType(t_sonGeo.getString("type"));
-						JsonArray t_arrayCoor = t_sonGeo.getJsonArray("coordinates");
-						List<Double> t_coordenadas = new ArrayList<>();
-						for (JsonValue jsonValue : t_arrayCoor)
-						{
-							t_coordenadas.add(Double.parseDouble(jsonValue.toString()));
-						}
-						t_geometry.setCoordinates(t_coordenadas);
-						t_paradaTaxi.setGeometry(t_geometry);
-						t_paradaTaxi.setgeocodigo(a_jsonObject.getString("GEOCODIGO"));
-						t_paradaTaxi.setlong_sig(a_jsonObject.getInt("LONG_SIG"));
-						t_paradaTaxi.setBarrio(a_jsonObject.getString("Barrio"));
-						t_paradaTaxi.setdireccion(a_jsonObject.getString("DIRECCION"));
-						m_listaParadas.add(t_paradaTaxi);
-						addZona(t_paradaTaxi.getBarrio());
-					}
-				}
-		);
-		hilo.start();
+			JsonObject t_sonGeo = a_jsonObject.getJsonObject("geometry");
+			t_geometry.setType(t_sonGeo.getString("type"));
+			JsonArray t_arrayCoor = t_sonGeo.getJsonArray("coordinates");
+			List<Double> t_coordenadas = new ArrayList<>();
+			for (JsonValue jsonValue : t_arrayCoor)
+			{
+				t_coordenadas.add(Double.parseDouble(jsonValue.toString()));
+			}
+			t_geometry.setCoordinates(t_coordenadas);
+			t_paradaTaxi.setGeometry(t_geometry);
+			t_paradaTaxi.setgeocodigo(a_jsonObject.getString("GEOCODIGO"));
+			t_paradaTaxi.setlong_sig(a_jsonObject.getInt("LONG_SIG"));
+			t_paradaTaxi.setBarrio(a_jsonObject.getString("Barrio"));
+			t_paradaTaxi.setdireccion(a_jsonObject.getString("DIRECCION"));
+			m_listaParadas.add(t_paradaTaxi);
+			addZona(t_paradaTaxi.getBarrio());
 	}
+
 	@Override
 	public List<Geometry> getGeometrys(String a_barrio)
 	{
